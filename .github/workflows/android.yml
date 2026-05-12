@@ -33,17 +33,17 @@ jobs:
       - name: Generate Bundle
         run: npx react-native bundle --platform android --dev false --entry-file App.tsx --bundle-output android/app/src/main/assets/index.android.bundle
 
+      # Используем официальное действие для настройки Gradle без лишних команд
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v3
+        with:
+          gradle-version: 8.4 
 
       - name: Build with Gradle
         run: |
           cd android
-          # Создаем враппер версии 8.4 (она подошла)
-          gradle wrapper --gradle-version 8.4
-          chmod +x gradlew
-          # Очистка и сборка с ограничением памяти, чтобы не вылетало
-          ./gradlew clean assembleDebug --no-daemon -Dorg.gradle.jvmargs="-Xmx2048m -XX:MaxMetaspaceSize=512m"
+          # Вызываем gradle напрямую, без ./gradlew
+          gradle assembleDebug --no-daemon -Dorg.gradle.jvmargs="-Xmx2048m"
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
