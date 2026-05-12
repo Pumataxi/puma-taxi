@@ -19,15 +19,30 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      # Генерируем недостающие файлы обертки прямо на сервере
-      - name: Generate Gradle Wrapper
-        run: gradle wrapper
-        working-directory: android
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
 
+      # Устанавливаем зависимости из твоего нового package.json
+      - name: Install Dependencies
+        run: npm install
+
+      # Генерируем ту самую обертку, которой не хватает на 64-й операции
+      - name: Generate Gradle Wrapper
+        run: npx react-native bundle --platform android --dev false --entry-file App.tsx --bundle-output android/app/src/main/assets/index.android.bundle --assets-dest android/app/src/main/res && cd android && gradle wrapper --gradle-version 8.0.2
+        
       - name: Make gradlew executable
         run: chmod +x gradlew
         working-directory: android
 
+      # Сборка с очисткой, чтобы пробить 64-ю операцию
       - name: Build with Gradle
-        run: ./gradlew assembleDebug
+        run: ./gradlew clean assembleDebug --stacktrace
         working-directory: android
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: pumataxi-debug
+          path: android/app/build/outputs/apk/debug/app-debug.apk
