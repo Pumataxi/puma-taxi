@@ -2,6 +2,7 @@ name: Build Android APK
 on:
   push:
     branches: [ "main" ]
+  workflow_dispatch: # Это добавит кнопку ручного запуска
 
 jobs:
   build:
@@ -18,16 +19,9 @@ jobs:
 
       - name: Force Build with System Gradle
         run: |
-          # Переходим в папку с Android проектом
           cd android
-          
-          # Устанавливаем системный сборщик, чтобы не искать твои файлы
           sudo apt-get update && sudo apt-get install gradle -y
-          
-          # Генерируем недостающий wrapper прямо на сервере Гитхаба
           gradle wrapper
-          
-          # Даем права и запускаем сборку
           chmod +x gradlew
           ./gradlew assembleRelease --stacktrace
 
