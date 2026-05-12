@@ -15,15 +15,11 @@ jobs:
         java-version: '17'
         distribution: 'zulu'
 
-    - name: Install Gradle and Build
+    - name: Build with System Gradle
       run: |
         cd android
-        # Устанавливаем Gradle Wrapper (создаст и .jar, и gradlew)
-        gradle wrapper
-        # Даем права новому файлу
-        chmod +x gradlew
-        # Запускаем сборку
-        ./gradlew assembleRelease
+        # Мы НЕ используем ./gradlew, мы берем системный gradle
+        gradle assembleRelease --stacktrace
       
     - name: Upload APK
       uses: actions/upload-artifact@v4
