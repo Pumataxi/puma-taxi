@@ -15,11 +15,16 @@ jobs:
         java-version: '17'
         distribution: 'zulu'
         
+    - name: Accept Android Licenses
+      run: yes | sdkmanager --licenses || true
+
     - name: Make gradlew executable
       run: chmod +x android/gradlew
       
     - name: Build APK
-      run: cd android && ./gradlew assembleRelease
+      run: |
+        cd android
+        ./gradlew assembleRelease --stacktrace
       
     - name: Upload APK
       uses: actions/upload-artifact@v4
