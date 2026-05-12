@@ -39,10 +39,11 @@ jobs:
       - name: Build with Gradle
         run: |
           cd android
-          # Устанавливаем версию 8.4, так как 8.0.2 для тебя слишком старая
+          # Создаем враппер версии 8.4
           gradle wrapper --gradle-version 8.4
           chmod +x gradlew
-          ./gradlew assembleDebug --no-daemon -Dorg.gradle.jvmargs="-Xmx2048m"
+          # Собираем с очисткой и лимитом памяти
+          ./gradlew clean assembleDebug --no-daemon -Dorg.gradle.jvmargs="-Xmx2048m"
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
