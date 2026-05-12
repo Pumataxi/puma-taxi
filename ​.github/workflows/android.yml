@@ -14,19 +14,19 @@ jobs:
       with:
         java-version: '17'
         distribution: 'zulu'
-        
-    - name: Find and Make gradlew executable
-      run: |
-        find . -name "gradlew" -exec chmod +x {} +
-        echo "Gradlew found and unlocked"
 
-    - name: Build APK
+    - name: Install Gradle and Build
       run: |
-        if [ -d "Android" ]; then cd Android; elif [ -d "android" ]; then cd android; fi
+        cd android
+        # Устанавливаем Gradle Wrapper (создаст и .jar, и gradlew)
+        gradle wrapper
+        # Даем права новому файлу
+        chmod +x gradlew
+        # Запускаем сборку
         ./gradlew assembleRelease
       
     - name: Upload APK
       uses: actions/upload-artifact@v4
       with:
         name: puma-taxi-apk
-        path: "**/build/outputs/apk/release/*.apk"
+        path: "android/app/build/outputs/apk/release/*.apk"
