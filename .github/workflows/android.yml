@@ -24,21 +24,25 @@ jobs:
         with:
           node-version: '18'
 
-      # Устанавливаем зависимости из твоего нового package.json
       - name: Install Dependencies
-        run: npm install
+        run: npm install --force
 
-      # Генерируем ту самую обертку, которой не хватает на 64-й операции
+      # Создаем структуру папок, чтобы Metro не вылетал
+      - name: Create Assets Folder
+        run: mkdir -p android/app/src/main/assets
+
+      - name: Generate Bundle
+        run: npx react-native bundle --platform android --dev false --entry-file App.tsx --bundle-output android/app/src/main/assets/index.android.bundle
+
       - name: Generate Gradle Wrapper
-        run: npx react-native bundle --platform android --dev false --entry-file App.tsx --bundle-output android/app/src/main/assets/index.android.bundle --assets-dest android/app/src/main/res && cd android && gradle wrapper --gradle-version 8.0.2
+        run: cd android && gradle wrapper --gradle-version 8.0.2
         
       - name: Make gradlew executable
         run: chmod +x gradlew
         working-directory: android
 
-      # Сборка с очисткой, чтобы пробить 64-ю операцию
       - name: Build with Gradle
-        run: ./gradlew clean assembleDebug --stacktrace
+        run: ./gradlew assembleDebug --stacktrace
         working-directory: android
 
       - name: Upload APK
