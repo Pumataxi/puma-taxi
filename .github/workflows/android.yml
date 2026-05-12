@@ -19,6 +19,11 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
+      # Генерируем недостающие файлы обертки прямо на сервере
+      - name: Generate Gradle Wrapper
+        run: gradle wrapper
+        working-directory: android
+
       - name: Make gradlew executable
         run: chmod +x gradlew
         working-directory: android
