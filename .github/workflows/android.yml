@@ -39,10 +39,11 @@ jobs:
       - name: Build with Gradle
         run: |
           cd android
+          # Создаем враппер версии 8.4 (она подошла)
           gradle wrapper --gradle-version 8.4
           chmod +x gradlew
-          # Добавляем --refresh-dependencies, чтобы он скачал потерянные темы
-          ./gradlew assembleDebug --no-daemon --refresh-dependencies -Dorg.gradle.jvmargs="-Xmx2048m"
+          # Очистка и сборка с ограничением памяти, чтобы не вылетало
+          ./gradlew clean assembleDebug --no-daemon -Dorg.gradle.jvmargs="-Xmx2048m -XX:MaxMetaspaceSize=512m"
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
