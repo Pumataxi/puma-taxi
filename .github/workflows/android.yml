@@ -33,21 +33,15 @@ jobs:
       - name: Generate Bundle
         run: npx react-native bundle --platform android --dev false --entry-file App.tsx --bundle-output android/app/src/main/assets/index.android.bundle
 
-      # Ставим Gradle и генерируем Wrapper вручную
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v3
 
-      - name: Generate Wrapper
-        run: |
-          cd android
-          gradle wrapper --gradle-version 8.0.2
-
-      # Теперь сборка точно увидит нужный класс
       - name: Build with Gradle
         run: |
           cd android
+          gradle wrapper --gradle-version 8.0.2
           chmod +x gradlew
-          ./gradlew assembleDebug --stacktrace
+          ./gradlew assembleDebug --no-daemon --stacktrace
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
