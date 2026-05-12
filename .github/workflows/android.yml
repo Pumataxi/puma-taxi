@@ -33,16 +33,13 @@ jobs:
       - name: Generate Bundle
         run: npx react-native bundle --platform android --dev false --entry-file App.tsx --bundle-output android/app/src/main/assets/index.android.bundle
 
-      # Исправляем настройки Gradle перед сборкой
-      - name: Prepare Gradle
+      # Упрощенная сборка без лишних подготовок
+      - name: Build with Gradle
         run: |
           cd android
           chmod +x gradlew
-          ./gradlew clean
-
-      - name: Build with Gradle
-        run: cd android && ./gradlew assembleDebug --stacktrace
-
+          ./gradlew assembleDebug --stacktrace
+          
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
