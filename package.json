@@ -1,9 +1,7 @@
 {
-  "name": "puma-taxi",
+  "name": "pumataxi",
   "version": "1.0.0",
-  "scripts": {
-    "android": "react-native run-android"
-  },
+  "private": true,
   "dependencies": {
     "react": "18.2.0",
     "react-native": "0.72.6"
