@@ -15,19 +15,18 @@ jobs:
         java-version: '17'
         distribution: 'zulu'
         
-    - name: Accept Android Licenses
-      run: yes | sdkmanager --licenses || true
+    - name: Find and Make gradlew executable
+      run: |
+        find . -name "gradlew" -exec chmod +x {} +
+        echo "Gradlew found and unlocked"
 
-    - name: Make gradlew executable
-      run: chmod +x android/gradlew
-      
     - name: Build APK
       run: |
-        cd android
-        ./gradlew assembleRelease --stacktrace
+        if [ -d "Android" ]; then cd Android; elif [ -d "android" ]; then cd android; fi
+        ./gradlew assembleRelease
       
     - name: Upload APK
       uses: actions/upload-artifact@v4
       with:
         name: puma-taxi-apk
-        path: android/app/build/outputs/apk/release/*.apk
+        path: "**/build/outputs/apk/release/*.apk"
