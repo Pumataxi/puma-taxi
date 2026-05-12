@@ -15,14 +15,19 @@ jobs:
         java-version: '17'
         distribution: 'zulu'
 
-    - name: Build with System Gradle
+    - name: Force Gradle Setup and Build
       run: |
         cd android
-        # Мы НЕ используем ./gradlew, мы берем системный gradle
-        gradle assembleRelease --stacktrace
+        # Устанавливаем сам Gradle в систему Гитхаба, раз в проекте его нет
+        sudo apt-get install gradle -y
+        # Генерируем враппер (теперь он точно создаст jar в памяти робота)
+        gradle wrapper
+        chmod +x gradlew
+        # Поехали собирать!
+        ./gradlew assembleRelease
       
     - name: Upload APK
       uses: actions/upload-artifact@v4
       with:
         name: puma-taxi-apk
-        path: "android/app/build/outputs/apk/release/*.apk"
+        path: "**/build/outputs/apk/release/*.apk"
