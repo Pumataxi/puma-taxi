@@ -7,29 +7,32 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
-    
-    - name: set up JDK 17
-      uses: actions/setup-java@v4
-      with:
-        java-version: '17'
-        distribution: 'zulu'
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-    - name: Build Puma with Appwrite
-      run: |
-        # Устанавливаем системный gradle, чтобы не зависеть от файлов в репозитории
-        sudo apt-get update && sudo apt-get install gradle -y
-        
-        cd android
-        # Генерируем всё необходимое прямо в памяти сервера
-        gradle wrapper
-        chmod +x gradlew
-        
-        # Самый важный этап: сборка
-        ./gradlew assembleRelease --stacktrace
-      
-    - name: Upload APK
-      uses: actions/upload-artifact@v4
-      with:
-        name: puma-taxi-apk
-        path: "android/app/build/outputs/apk/release/*.apk"
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'zulu'
+
+      - name: Force Build with System Gradle
+        run: |
+          # Переходим в папку с Android проектом
+          cd android
+          
+          # Устанавливаем системный сборщик, чтобы не искать твои файлы
+          sudo apt-get update && sudo apt-get install gradle -y
+          
+          # Генерируем недостающий wrapper прямо на сервере Гитхаба
+          gradle wrapper
+          
+          # Даем права и запускаем сборку
+          chmod +x gradlew
+          ./gradlew assembleRelease --stacktrace
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: puma-taxi-apk
+          path: "android/app/build/outputs/apk/release/*.apk"
