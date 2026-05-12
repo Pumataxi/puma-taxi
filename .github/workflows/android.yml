@@ -17,3 +17,5 @@ jobs:
           distribution: 'temurin'
       - name: Build with Gradle
         run: ./gradlew assembleDebug
+        working-directory: android
+
