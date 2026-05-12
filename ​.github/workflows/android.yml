@@ -2,7 +2,7 @@ name: Build Android APK
 on:
   push:
     branches: [ "main" ]
-  workflow_dispatch: # Это добавит кнопку ручного запуска
+  workflow_dispatch:
 
 jobs:
   build:
