@@ -27,23 +27,21 @@ jobs:
       - name: Install Dependencies
         run: npm install --force
 
-      # Создаем структуру папок, чтобы Metro не вылетал
       - name: Create Assets Folder
         run: mkdir -p android/app/src/main/assets
 
       - name: Generate Bundle
         run: npx react-native bundle --platform android --dev false --entry-file App.tsx --bundle-output android/app/src/main/assets/index.android.bundle
 
-      - name: Generate Gradle Wrapper
-        run: cd android && gradle wrapper --gradle-version 8.0.2
-        
-      - name: Make gradlew executable
-        run: chmod +x gradlew
-        working-directory: android
+      # Исправляем настройки Gradle перед сборкой
+      - name: Prepare Gradle
+        run: |
+          cd android
+          chmod +x gradlew
+          ./gradlew clean
 
       - name: Build with Gradle
-        run: ./gradlew assembleDebug --stacktrace
-        working-directory: android
+        run: cd android && ./gradlew assembleDebug --stacktrace
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
