@@ -33,17 +33,16 @@ jobs:
       - name: Generate Bundle
         run: npx react-native bundle --platform android --dev false --entry-file App.tsx --bundle-output android/app/src/main/assets/index.android.bundle
 
-      # Используем официальное действие для настройки Gradle без лишних команд
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v3
         with:
-          gradle-version: 8.4 
+          gradle-version: 8.4
 
       - name: Build with Gradle
         run: |
           cd android
-          # Вызываем gradle напрямую, без ./gradlew
-          gradle assembleDebug --no-daemon -Dorg.gradle.jvmargs="-Xmx2048m"
+          # Очистка кэша ресурсов и принудительное скачивание зависимостей
+          gradle clean assembleDebug --no-daemon --stacktrace -Dorg.gradle.jvmargs="-Xmx2048m"
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
