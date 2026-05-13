@@ -10,12 +10,11 @@ buildscript {
     repositories {
         google()
         mavenCentral()
-        // ГОВОРИМ ГРЕДЛУ СМОТРЕТЬ ТУТ В ПЕРВУЮ ОЧЕРЕДЬ:
-        maven { url("$rootDir/../node_modules/react-native/android") }
     }
     dependencies {
         classpath("com.android.tools.build:gradle:8.1.1")
-        classpath("com.facebook.react:react-native-gradle-plugin")
+        // Указываем версию ПРЯМО ТУТ, чтобы он не искал её вечно
+        classpath("com.facebook.react:react-native-gradle-plugin:0.72.6")
         classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
     }
 }
@@ -24,7 +23,7 @@ allprojects {
     repositories {
         google()
         mavenCentral()
-        maven { url("$rootDir/../node_modules/react-native/android") }
-        maven { url("$rootDir/../node_modules/jsc-android/dist") }
+        // На всякий случай оставляем путь к локальным файлам
+        maven { url "$rootDir/../node_modules/react-native/android" }
     }
 }
