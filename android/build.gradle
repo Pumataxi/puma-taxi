@@ -10,14 +10,12 @@ buildscript {
     repositories {
         google()
         mavenCentral()
-        // Добавляем официальный портал плагинов Gradle
-        maven { url "https://plugins.gradle.org/m2/" }
     }
     dependencies {
         classpath("com.android.tools.build:gradle:8.1.1")
         classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
-        // Подключаем плагин напрямую через стабильную версию из сети
-        classpath("com.facebook.react:react-native-gradle-plugin:0.72.11")
+        // Указываем плагин без версии, он подтянется из includeBuild в settings.gradle
+        classpath("com.facebook.react:react-native-gradle-plugin")
     }
 }
 
