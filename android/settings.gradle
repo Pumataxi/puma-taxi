@@ -1,7 +1,3 @@
 rootProject.name = 'PumaTaxi'
-
-// Явно подключаем плагин React Native, чтобы Gradle его не искал в сети
-apply from: file("../node_modules/@react-native/gradle-plugin/registration.gradle")
-
 include ':app'
-includeBuild('../node_modules/@react-native/gradle-plugin')
+includeBuild('../node_modules/react-native-gradle-plugin')
