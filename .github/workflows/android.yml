@@ -26,13 +26,16 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '18'
-          # Убрали кэширование, чтобы он не искал lock-файл
 
       - name: Install Dependencies
         run: npm install --force
 
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
+        with:
+          gradle-version: 8.5 # Устанавливаем рабочую версию напрямую
+
       - name: Build Android APK
         run: |
           cd android
-          chmod +x gradlew
-          ./gradlew assembleRelease
+          gradle assembleRelease # Запускаем напрямую через установленный Gradle
