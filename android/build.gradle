@@ -10,11 +10,12 @@ buildscript {
     repositories {
         google()
         mavenCentral()
+        // Сначала ищем плагин прямо в твоем проекте:
+        maven { url "$rootDir/../node_modules/react-native/android" }
     }
     dependencies {
         classpath("com.android.tools.build:gradle:8.1.1")
-        // Добавили версию 0.72.6, чтобы Gradle её нашел:
-        classpath("com.facebook.react:react-native-gradle-plugin:0.72.6")
+        classpath("com.facebook.react:react-native-gradle-plugin")
         classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
     }
 }
@@ -24,5 +25,6 @@ allprojects {
         google()
         mavenCentral()
         maven { url "$rootDir/../node_modules/react-native/android" }
+        maven { url "$rootDir/../node_modules/jsc-android/dist" }
     }
 }
