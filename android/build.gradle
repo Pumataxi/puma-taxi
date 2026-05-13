@@ -10,8 +10,8 @@ buildscript {
     repositories {
         google()
         mavenCentral()
-        // Сначала ищем плагин прямо в твоем проекте:
-        maven { url "$rootDir/../node_modules/react-native/android" }
+        // ГОВОРИМ ГРЕДЛУ СМОТРЕТЬ ТУТ В ПЕРВУЮ ОЧЕРЕДЬ:
+        maven { url("$rootDir/../node_modules/react-native/android") }
     }
     dependencies {
         classpath("com.android.tools.build:gradle:8.1.1")
@@ -24,7 +24,7 @@ allprojects {
     repositories {
         google()
         mavenCentral()
-        maven { url "$rootDir/../node_modules/react-native/android" }
-        maven { url "$rootDir/../node_modules/jsc-android/dist" }
+        maven { url("$rootDir/../node_modules/react-native/android") }
+        maven { url("$rootDir/../node_modules/jsc-android/dist") }
     }
 }
