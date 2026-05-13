@@ -22,12 +22,7 @@ allprojects {
     repositories {
         google()
         mavenCentral()
-        // Вот эта магия поможет найти плагин:
-        maven {
-            url("$rootDir/../node_modules/react-native/android")
-        }
-        maven {
-            url("$rootDir/../node_modules/jsc-android/dist")
-        }
+        // ВОТ ЭТА СТРОКА — ГЛАВНОЕ ИСПРАВЛЕНИЕ:
+        maven { url "$rootDir/../node_modules/react-native/android" }
     }
 }
