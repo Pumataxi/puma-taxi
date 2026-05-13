@@ -1,8 +1,19 @@
-android {
-    // Используем переменные из внешнего файла
-    compileSdkVersion rootProject.ext.compileSdkVersion
-    buildToolsVersion rootProject.ext.buildToolsVersion
+apply plugin: "com.android.application"
+apply plugin: "com.facebook.react"
+apply plugin: "org.jetbrains.kotlin.android"
 
+/**
+ * Конфигурация React Native
+ */
+react {
+    /* Здесь можно добавить специфические настройки для RN 0.72+, если потребуется */
+}
+
+def jscFlavor = 'org.webkit:android-jsc:+'
+
+android {
+    ndkVersion rootProject.ext.ndkVersion
+    compileSdkVersion rootProject.ext.compileSdkVersion
     namespace "com.pumataxi"
 
     defaultConfig {
@@ -12,4 +23,43 @@ android {
         versionCode 1
         versionName "1.0"
     }
+
+    signingConfigs {
+        debug {
+            storeFile file('debug.keystore')
+            storePassword 'android'
+            keyAlias 'androiddebugkey'
+            keyPassword 'android'
+        }
+    }
+
+    buildTypes {
+        debug {
+            signingConfig signingConfigs.debug
+        }
+        release {
+            signingConfig signingConfigs.debug // Временно используем debug для тестов APK
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
+        }
+    }
 }
+
+dependencies {
+    // Основные зависимости React Native
+    implementation("com.facebook.react:react-android")
+
+    // Поддержка Hermes или JSC
+    if (hermesEnabled.toBoolean()) {
+        implementation("com.facebook.react:hermes-android")
+    } else {
+        implementation jscFlavor
+    }
+
+    // ТВОЯ БАЗА ДАННЫХ: Appwrite (убедись, что версия актуальна)
+    // implementation("io.appwrite:sdk-for-android:1.1.0") 
+}
+
+// ВАЖНО: В самом низу файла НЕ ДОЛЖНО БЫТЬ строки:
+// apply plugin: 'com.google.gms.google-services' 
+// Если она там есть — удали её.
