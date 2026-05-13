@@ -2,8 +2,9 @@ name: Build Android APK
 
 on:
   push:
-    branches: [ "main" ]
-  workflow_dispatch:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
 
 jobs:
   build:
@@ -27,25 +28,16 @@ jobs:
       - name: Install Dependencies
         run: npm install --force
 
-      - name: Create Assets Folder
-        run: mkdir -p android/app/src/main/assets
+      - name: Make Gradlew Executable
+        run: chmod +x gradlew
+        working-directory: android
 
-      - name: Generate Bundle
-        run: npx react-native bundle --platform android --dev false --entry-file App.tsx --bundle-output android/app/src/main/assets/index.android.bundle
-
-      - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v3
-        with:
-          gradle-version: 8.4
-
-      - name: Build with Gradle
-        run: |
-          cd android
-          # Очистка кэша ресурсов и принудительное скачивание зависимостей
-          gradle clean assembleDebug --no-daemon --stacktrace -Dorg.gradle.jvmargs="-Xmx2048m"
+      - name: Build Android APK
+        run: ./gradlew assembleRelease
+        working-directory: android
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: pumataxi-debug
-          path: android/app/build/outputs/apk/debug/app-debug.apk
+          name: app-release
+          path: android/app/build/outputs/apk/release/app-release.apk
