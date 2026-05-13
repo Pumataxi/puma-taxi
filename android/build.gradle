@@ -13,7 +13,6 @@ buildscript {
     }
     dependencies {
         classpath("com.android.tools.build:gradle:8.1.1")
-        // Добавляем проверку, чтобы он не искал пустую версию
         classpath("com.facebook.react:react-native-gradle-plugin")
         classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
     }
@@ -23,9 +22,12 @@ allprojects {
     repositories {
         google()
         mavenCentral()
-        // Добавляем локальный поиск плагинов React Native
+        // Вот эта магия поможет найти плагин:
         maven {
             url("$rootDir/../node_modules/react-native/android")
+        }
+        maven {
+            url("$rootDir/../node_modules/jsc-android/dist")
         }
     }
 }
