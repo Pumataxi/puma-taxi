@@ -1,11 +1,10 @@
-apply plugin: "com.android.application"
-apply plugin: "com.facebook.react"
-apply plugin: "org.jetbrains.kotlin.android"
-
 android {
-    namespace "com.pumataxi" // Проверь, чтобы тут был твой ID
+    // Используем переменные из внешнего файла
     compileSdkVersion rootProject.ext.compileSdkVersion
-    
+    buildToolsVersion rootProject.ext.buildToolsVersion
+
+    namespace "com.pumataxi"
+
     defaultConfig {
         applicationId "com.pumataxi"
         minSdkVersion rootProject.ext.minSdkVersion
@@ -13,5 +12,4 @@ android {
         versionCode 1
         versionName "1.0"
     }
-    // ... остальной код
 }
