@@ -13,7 +13,8 @@ buildscript {
     }
     dependencies {
         classpath("com.android.tools.build:gradle:8.1.1")
-        classpath("com.facebook.react:react-native-gradle-plugin")
+        // Добавили версию 0.72.6, чтобы Gradle её нашел:
+        classpath("com.facebook.react:react-native-gradle-plugin:0.72.6")
         classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
     }
 }
@@ -22,9 +23,6 @@ allprojects {
     repositories {
         google()
         mavenCentral()
-        // БЕЗ ЭТОЙ СТРОЧКИ БУДЕТ ОШИБКА 20 СЕКУНД:
-        maven {
-            url("$rootDir/../node_modules/react-native/android")
-        }
+        maven { url "$rootDir/../node_modules/react-native/android" }
     }
 }
