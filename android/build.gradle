@@ -14,11 +14,11 @@ buildscript {
     dependencies {
         classpath("com.android.tools.build:gradle:8.1.1")
         classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
-        // Указываем плагин без версии, он подтянется из includeBuild в settings.gradle
-        classpath("com.facebook.react:react-native-gradle-plugin")
+        // Убираем прямое упоминание react-native-gradle-plugin здесь
     }
 }
 
+// Эта магия сама найдет и подключит все плагины из node_modules
 allprojects {
     repositories {
         google()
