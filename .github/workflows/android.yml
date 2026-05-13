@@ -3,8 +3,6 @@ name: Build Android APK
 on:
   push:
     branches: [ main ]
-  pull_request:
-    branches: [ main ]
 
 jobs:
   build:
@@ -23,17 +21,20 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version: '20'
 
       - name: Install Dependencies
         run: npm install --force
 
-      - name: Make Gradlew Executable
-        run: chmod +x gradlew
+      # ЭТОТ ШАГ ПОЧИНИТ ОШИБКУ GradleWrapperMain
+      - name: Regenerate Gradle Wrapper
+        run: gradle wrapper
         working-directory: android
 
       - name: Build Android APK
-        run: ./gradlew assembleRelease
+        run: |
+          chmod +x gradlew
+          ./gradlew assembleRelease
         working-directory: android
 
       - name: Upload APK
