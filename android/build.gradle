@@ -12,15 +12,10 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        // Главный плагин Android
         classpath("com.android.tools.build:gradle:8.1.1")
-        // Плагин Kotlin
         classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
-        // Плагин React Native
-        classpath("com.facebook.react:react-native-gradle-plugin")
-        
-        // ВАЖНО: Здесь БОЛЬШЕ НЕТ строки classpath("com.google.gms:google-services")
-        // Мы её удалили, чтобы Firebase не путал Appwrite.
+        // Указываем точную версию плагина React Native
+        classpath("com.facebook.react:react-native-gradle-plugin:0.72.11")
     }
 }
 
@@ -28,8 +23,6 @@ allprojects {
     repositories {
         google()
         mavenCentral()
-
-        // Пути для поиска библиотек React Native и JSC локально
         maven { url "$rootDir/../node_modules/react-native/android" }
         maven { url "$rootDir/../node_modules/jsc-android/dist" }
     }
