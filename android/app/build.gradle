@@ -1,5 +1,17 @@
 apply plugin: "com.android.application"
-apply plugin: "com.facebook.react" // Этой строки достаточно, если пути в allprojects верны
+apply plugin: "com.facebook.react"
 apply plugin: "org.jetbrains.kotlin.android"
 
-// ... остальной код файла
+android {
+    namespace "com.pumataxi" // Проверь, чтобы тут был твой ID
+    compileSdkVersion rootProject.ext.compileSdkVersion
+    
+    defaultConfig {
+        applicationId "com.pumataxi"
+        minSdkVersion rootProject.ext.minSdkVersion
+        targetSdkVersion rootProject.ext.targetSdkVersion
+        versionCode 1
+        versionName "1.0"
+    }
+    // ... остальной код
+}
