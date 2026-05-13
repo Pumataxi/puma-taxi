@@ -22,7 +22,9 @@ allprojects {
     repositories {
         google()
         mavenCentral()
-        // ВОТ ЭТА СТРОКА — ГЛАВНОЕ ИСПРАВЛЕНИЕ:
-        maven { url "$rootDir/../node_modules/react-native/android" }
+        // БЕЗ ЭТОЙ СТРОЧКИ БУДЕТ ОШИБКА 20 СЕКУНД:
+        maven {
+            url("$rootDir/../node_modules/react-native/android")
+        }
     }
 }
