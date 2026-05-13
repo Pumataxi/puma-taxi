@@ -1,8 +1,2 @@
 rootProject.name = 'PumaTaxi'
-
-// Подключаем основной модуль приложения
 include ':app'
-
-// Указываем путь к плагину React Native в node_modules. 
-// Это стандартный способ для версии 0.72+, который заменяет старые зависимости.
-includeBuild('../node_modules/@react-native/gradle-plugin')
