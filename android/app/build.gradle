@@ -2,17 +2,9 @@ apply plugin: "com.android.application"
 apply plugin: "com.facebook.react"
 apply plugin: "org.jetbrains.kotlin.android"
 
-/**
- * Конфигурация React Native
- */
-react {
-    /* Автоматически подхватывает настройки из node_modules */
-}
-
 def jscFlavor = 'org.webkit:android-jsc:+'
 
 android {
-    // Используем общие настройки из корневого файла
     ndkVersion rootProject.ext.ndkVersion
     compileSdkVersion rootProject.ext.compileSdkVersion
     namespace "com.pumataxi"
@@ -23,6 +15,16 @@ android {
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
         versionName "1.0"
+    }
+
+    // Это критически важно для Gradle 8.5 и работы с Appwrite
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+    
+    kotlinOptions {
+        jvmTarget = '17'
     }
 
     signingConfigs {
@@ -39,28 +41,27 @@ android {
             signingConfig signingConfigs.debug
         }
         release {
-            signingConfig signingConfigs.debug // Временно для тестов используем дебаг-ключ
+            signingConfig signingConfigs.debug
             minifyEnabled false
             proguardFiles getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
         }
     }
+    
+    // Игнорируем ошибки дублирования ресурсов, которые часто бывают после удаления Firebase
+    packagingOptions {
+        pickFirst 'lib/x86/libc++_shared.so'
+        pickFirst 'lib/x86_64/libc++_shared.so'
+        pickFirst 'lib/armeabi-v7a/libc++_shared.so'
+        pickFirst 'lib/arm64-v8a/libc++_shared.so'
+    }
 }
 
 dependencies {
-    // Ядро React Native
     implementation("com.facebook.react:react-android")
 
-    // Поддержка движка (Hermes или JSC)
     if (hermesEnabled.toBoolean()) {
         implementation("com.facebook.react:hermes-android")
     } else {
         implementation jscFlavor
     }
-
-    // Твоя рабочая база - Appwrite
-    // implementation("io.appwrite:sdk-for-android:1.1.0")
 }
-
-// КРИТИЧЕСКИ ВАЖНО:
-// Здесь ВООБЩЕ НЕ ДОЛЖНО БЫТЬ строки:
-// apply plugin: 'com.google.gms.google-services'
