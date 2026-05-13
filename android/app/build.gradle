@@ -6,12 +6,13 @@ apply plugin: "org.jetbrains.kotlin.android"
  * Конфигурация React Native
  */
 react {
-    /* Здесь можно добавить специфические настройки для RN 0.72+, если потребуется */
+    /* Автоматически подхватывает настройки из node_modules */
 }
 
 def jscFlavor = 'org.webkit:android-jsc:+'
 
 android {
+    // Используем общие настройки из корневого файла
     ndkVersion rootProject.ext.ndkVersion
     compileSdkVersion rootProject.ext.compileSdkVersion
     namespace "com.pumataxi"
@@ -38,7 +39,7 @@ android {
             signingConfig signingConfigs.debug
         }
         release {
-            signingConfig signingConfigs.debug // Временно используем debug для тестов APK
+            signingConfig signingConfigs.debug // Временно для тестов используем дебаг-ключ
             minifyEnabled false
             proguardFiles getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
         }
@@ -46,20 +47,20 @@ android {
 }
 
 dependencies {
-    // Основные зависимости React Native
+    // Ядро React Native
     implementation("com.facebook.react:react-android")
 
-    // Поддержка Hermes или JSC
+    // Поддержка движка (Hermes или JSC)
     if (hermesEnabled.toBoolean()) {
         implementation("com.facebook.react:hermes-android")
     } else {
         implementation jscFlavor
     }
 
-    // ТВОЯ БАЗА ДАННЫХ: Appwrite (убедись, что версия актуальна)
-    // implementation("io.appwrite:sdk-for-android:1.1.0") 
+    // Твоя рабочая база - Appwrite
+    // implementation("io.appwrite:sdk-for-android:1.1.0")
 }
 
-// ВАЖНО: В самом низу файла НЕ ДОЛЖНО БЫТЬ строки:
-// apply plugin: 'com.google.gms.google-services' 
-// Если она там есть — удали её.
+// КРИТИЧЕСКИ ВАЖНО:
+// Здесь ВООБЩЕ НЕ ДОЛЖНО БЫТЬ строки:
+// apply plugin: 'com.google.gms.google-services'
