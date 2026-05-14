@@ -26,17 +26,18 @@ jobs:
       - name: Install Dependencies
         run: npm install --legacy-peer-deps
 
-      - name: Generate Gradle Wrapper
-        # Эта команда сама создаст недостающий JAR файл
+      - name: Install Correct Gradle
+        # Мы скачиваем Gradle 8.5 напрямую, чтобы не зависеть от системного 9.4.1
         run: |
-          cd android
-          gradle wrapper --gradle-version 8.5
+          wget -q https://services.gradle.org/distributions/gradle-8.5-bin.zip
+          unzip -q gradle-8.5-bin.zip
+          echo "$(pwd)/gradle-8.5/bin" >> $GITHUB_PATH
 
       - name: Build Android APK
         run: |
           cd android
-          chmod +x gradlew
-          ./gradlew assembleRelease --stacktrace
+          # Используем команду 'gradle', которую мы только что установили
+          gradle assembleRelease --stacktrace
         env:
           JAVA_OPTS: "-Xmx2048m"
 
