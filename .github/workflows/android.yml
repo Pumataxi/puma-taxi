@@ -8,7 +8,6 @@ jobs:
   build:
     runs-on: ubuntu-latest
     env:
-      # Фикс для корректной работы Node.js в облаке GitHub
       FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
     steps:
@@ -27,20 +26,24 @@ jobs:
           node-version: '20'
 
       - name: Install Dependencies
-        # Устанавливаем JS-зависимости перед сборкой натива
         run: npm install --legacy-peer-deps
 
+      - name: Emergency Gradle Fix
+        # Этот шаг сам скачивает настоящий JAR, если в Гитхабе лежит пустышка
+        run: |
+          mkdir -p android/gradle/wrapper
+          curl -L https://raw.githubusercontent.com/gradle/gradle/v7.6.1/gradle/wrapper/gradle-wrapper.jar -o android/gradle/wrapper/gradle-wrapper.jar
+          curl -L https://raw.githubusercontent.com/gradle/gradle/v7.6.1/gradlew -o android/gradlew
+          chmod +x android/gradlew
+
       - name: Build Android APK
-        # Заходим в папку android, даем права и запускаем наш исправленный воркер
         run: |
           cd android
-          chmod +x gradlew
           ./gradlew assembleRelease --stacktrace --no-daemon
         env:
           JAVA_OPTS: "-Xmx2048m"
 
       - name: Upload APK
-        # Сохраняем готовый файл, чтобы ты мог его скачать
         uses: actions/upload-artifact@v4
         with:
           name: puma-taxi-release
