@@ -8,7 +8,6 @@ jobs:
   build:
     runs-on: ubuntu-latest
     env:
-      # Включаем поддержку Node 24 для экшенов, чтобы убрать ворнинги из логов
       FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
     steps:
@@ -33,7 +32,12 @@ jobs:
         uses: gradle/actions/setup-gradle@v3
         with:
           gradle-version: 7.5.1
-          cache-disabled: true
+
+      - name: Generate Wrapper
+        # Это восстановит отсутствующий файл org.gradle.wrapper.GradleWrapperMain
+        run: |
+          cd android
+          gradle wrapper --gradle-version 7.5.1
 
       - name: Build Android APK
         run: |
@@ -42,7 +46,6 @@ jobs:
           ./gradlew assembleRelease --stacktrace
         env:
           JAVA_OPTS: "-Xmx2048m"
-          GRADLE_OPTS: "-Dorg.gradle.java.home=$JAVA_HOME"
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
