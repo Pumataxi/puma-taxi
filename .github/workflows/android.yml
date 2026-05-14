@@ -26,7 +26,7 @@ jobs:
       - name: Install Dependencies
         run: npm install --legacy-peer-deps
 
-      - name: Setup Gradle 8.5
+      - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v3
         with:
           gradle-version: 8.5
@@ -34,9 +34,8 @@ jobs:
       - name: Build Android APK
         run: |
           cd android
-          # ВНИМАНИЕ: Мы используем системный gradle, 
-          # так как локальный wrapper (jar-файл) отсутствует.
-          gradle assembleRelease --stacktrace
+          # Сначала чистим, потом собираем
+          gradle clean assembleRelease --stacktrace
         env:
           JAVA_OPTS: "-Xmx2048m"
 
