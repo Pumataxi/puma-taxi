@@ -28,29 +28,26 @@ jobs:
       - name: Install Dependencies
         run: npm install --legacy-peer-deps
 
-      - name: 🚨 Nuclear Key & Gradle Fix
+      - name: 🚨 Absolute Clean & Key Gen
         run: |
-          # 1. Исправляем структуру Gradle
+          # 1. Исправляем Gradle
           mkdir -p android/gradle/wrapper
           curl -L https://raw.githubusercontent.com/gradle/gradle/v7.6.1/gradle/wrapper/gradle-wrapper.jar -o android/gradle/wrapper/gradle-wrapper.jar
           curl -L https://raw.githubusercontent.com/gradle/gradle/v7.6.1/gradlew -o android/gradlew
           chmod +x android/gradlew
           
-          # 2. УНИЧТОЖАЕМ все следы старых ключей в памяти
-          find android -name "*.keystore" -type f -delete
-          
-          # 3. Создаем абсолютно чистый ключ
-          keytool -genkey -v -keystore android/app/fresh_build.keystore -storepass android -alias androiddebugkey -keypass android -keyalg RSA -keysize 2048 -validity 10000 -dname "CN=Android Debug,O=Android,C=US"
+          # 2. Генерируем новый ключ с АБСОЛЮТНО другим именем
+          keytool -genkey -v -keystore android/app/super_puma.jks -storepass pumataxi -alias puma_alias -keypass pumataxi -keyalg RSA -keysize 2048 -validity 10000 -dname "CN=Puma,O=Taxi,C=RU"
 
       - name: Build Android APK
         run: |
           cd android
-          # Мы принудительно пробрасываем путь к НОВОМУ ключу, игнорируя настройки проекта
+          # Насильно прописываем параметры нового ключа в команду сборки
           ./gradlew clean assembleRelease \
-            -Pandroid.injected.signing.store.file=fresh_build.keystore \
-            -Pandroid.injected.signing.store.password=android \
-            -Pandroid.injected.signing.key.alias=androiddebugkey \
-            -Pandroid.injected.signing.key.password=android \
+            -Pandroid.injected.signing.store.file=super_puma.jks \
+            -Pandroid.injected.signing.store.password=pumataxi \
+            -Pandroid.injected.signing.key.alias=puma_alias \
+            -Pandroid.injected.signing.key.password=pumataxi \
             --stacktrace --no-daemon
         env:
           JAVA_OPTS: "-Xmx2048m"
