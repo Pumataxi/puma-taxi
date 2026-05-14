@@ -3,19 +3,17 @@ apply plugin: "com.facebook.react"
 apply plugin: "org.jetbrains.kotlin.android"
 
 /**
- * Конфигурация React Native
+ * Определение переменных для React Native
  */
-react {
-    /* Здесь можно добавить автолинковку, если нужно */
-}
-
 def jscFlavor = 'org.webkit:android-jsc:+'
+// Твой фикс: объявляем переменную, чтобы Gradle не ругался
+def hermesEnabled = project.hasProperty("hermesEnabled") ? project.hermesEnabled.toBoolean() : false
 
 android {
     ndkVersion rootProject.ext.ndkVersion
     compileSdkVersion rootProject.ext.compileSdkVersion
 
-    namespace "com.pumataxi" // Убедись, что это совпадает с твоим пакетом
+    namespace "com.pumataxi"
     
     defaultConfig {
         applicationId "com.pumataxi"
@@ -23,8 +21,6 @@ android {
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
         versionName "1.0"
-        
-        // ₽ — символ рубля будет отображаться корректно
     }
 
     signingConfigs {
@@ -41,7 +37,7 @@ android {
             signingConfig signingConfigs.debug
         }
         release {
-            signingConfig signingConfigs.debug // Временно используем debug для тестов
+            signingConfig signingConfigs.debug
             minifyEnabled false
             proguardFiles getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
         }
@@ -55,9 +51,8 @@ android {
 
 dependencies {
     implementation("com.facebook.react:react-android")
-    implementation("com.facebook.react:hermes-android")
 
-    if (hermesEnabled.toBoolean()) {
+    if (hermesEnabled) {
         implementation("com.facebook.react:hermes-android")
     } else {
         implementation jscFlavor
