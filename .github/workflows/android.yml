@@ -8,7 +8,6 @@ jobs:
   build:
     runs-on: ubuntu-latest
     env:
-      # Фикс для корректной работы Node.js в экшенах
       FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
     steps:
@@ -27,7 +26,6 @@ jobs:
           node-version: '20'
 
       - name: Install Dependencies
-        # Используем --legacy-peer-deps для обхода конфликтов старых библиотек
         run: npm install --legacy-peer-deps
 
       - name: Setup Gradle
@@ -35,15 +33,16 @@ jobs:
         with:
           gradle-version: 7.6.1
 
-      - name: Restore Gradle Wrapper JAR
-        # КРИТИЧЕСКИЙ ШАГ: Если твой .jar файл в папке android сломан или пуст,
-        # эта команда скачает настоящий рабочий бинарник напрямую из Gradle.
+      - name: Recreate Gradle Wrapper (The Fix)
+        # Если папка или файл отсутствуют, этот шаг создаст их с нуля
         run: |
           mkdir -p android/gradle/wrapper
           curl -L https://raw.githubusercontent.com/gradle/gradle/v7.6.1/gradle/wrapper/gradle-wrapper.jar -o android/gradle/wrapper/gradle-wrapper.jar
+          # Проверяем, что файл скачался и имеет размер (не пустой)
+          ls -lh android/gradle/wrapper/
 
       - name: Build Android APK
-        # Запускаем сборку из КОРНЯ, чтобы Metro видел index.js
+        # Теперь запускаем сборку. Флаг -p android скажет Gradle зайти в нужную папку
         run: |
           chmod +x android/gradlew
           ./android/gradlew -p android assembleRelease --stacktrace --no-daemon
