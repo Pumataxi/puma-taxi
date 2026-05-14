@@ -24,8 +24,13 @@ jobs:
           node-version: '18'
 
       - name: Install Dependencies
-        # Мы убрали кэширование, чтобы билд просто поставил то, что есть
         run: npm install --legacy-peer-deps
+
+      - name: Fix Gradle Wrapper
+        # Эта команда создаст недостающий .jar файл
+        run: |
+          cd android
+          gradle wrapper
 
       - name: Make Gradlew Executable
         run: chmod +x android/gradlew
@@ -34,3 +39,11 @@ jobs:
         run: |
           cd android
           ./gradlew assembleRelease --stacktrace
+        env:
+          JAVA_OPTS: "-Xmx2048m"
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: puma-taxi-release
+          path: android/app/build/outputs/apk/release/*.apk
