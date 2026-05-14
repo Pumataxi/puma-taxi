@@ -26,18 +26,15 @@ jobs:
       - name: Install Dependencies
         run: npm install --legacy-peer-deps
 
-      - name: Fix Gradle Wrapper
-        # Эта команда создаст недостающий .jar файл
-        run: |
-          cd android
-          gradle wrapper
-
-      - name: Make Gradlew Executable
-        run: chmod +x android/gradlew
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
+        with:
+          gradle-version: 8.5
 
       - name: Build Android APK
         run: |
           cd android
+          chmod +x gradlew
           ./gradlew assembleRelease --stacktrace
         env:
           JAVA_OPTS: "-Xmx2048m"
