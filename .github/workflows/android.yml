@@ -26,19 +26,21 @@ jobs:
       - name: Install Dependencies
         run: npm install --legacy-peer-deps
 
-      - name: Generate Wrapper
-        # Эта команда создаст настоящий бинарный .jar файл в облаке
-        run: |
-          cd android
-          gradle wrapper --gradle-version 8.5
+      - name: Setup Gradle 8.5
+        uses: gradle/actions/setup-gradle@v3
+        with:
+          gradle-version: 8.5
+          cache-disabled: true # Отключим кэш, чтобы избежать ошибок 400
 
       - name: Build Android APK
         run: |
           cd android
-          chmod +x gradlew
-          ./gradlew assembleRelease --stacktrace
+          # Используем команду 'gradle', которую поставил шаг выше, 
+          # а не системный вызов
+          gradle assembleRelease --stacktrace
         env:
           JAVA_OPTS: "-Xmx2048m"
+          GRADLE_OPTS: "-Dorg.gradle.java.home=$JAVA_HOME"
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
