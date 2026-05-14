@@ -12,7 +12,6 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        // Здесь classpath() легален, так как мы внутри buildscript
         classpath("com.android.tools.build:gradle:7.4.2")
         classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
         classpath("com.facebook.react:react-native-gradle-plugin")
