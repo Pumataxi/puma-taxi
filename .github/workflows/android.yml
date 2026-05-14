@@ -34,10 +34,9 @@ jobs:
       - name: Build Android APK
         run: |
           cd android
-          # Даем права на запуск исполняемому файлу
-          chmod +x gradlew
-          # Запускаем сборку через локальный gradlew
-          ./gradlew assembleRelease --stacktrace
+          # ВНИМАНИЕ: Мы используем системный gradle, 
+          # так как локальный wrapper (jar-файл) отсутствует.
+          gradle assembleRelease --stacktrace
         env:
           JAVA_OPTS: "-Xmx2048m"
 
