@@ -28,13 +28,15 @@ jobs:
       - name: Install Dependencies
         run: npm install --legacy-peer-deps
 
-      - name: Emergency Gradle Fix
-        # Этот шаг сам скачивает настоящий JAR, если в Гитхабе лежит пустышка
+      - name: 🚨 Force Fix Gradle & Keys
+        # Этот шаг чинит структуру папок и создает временный ключ для подписи
         run: |
           mkdir -p android/gradle/wrapper
           curl -L https://raw.githubusercontent.com/gradle/gradle/v7.6.1/gradle/wrapper/gradle-wrapper.jar -o android/gradle/wrapper/gradle-wrapper.jar
           curl -L https://raw.githubusercontent.com/gradle/gradle/v7.6.1/gradlew -o android/gradlew
           chmod +x android/gradlew
+          # Генерируем временный ключ, чтобы билд не ругался на его отсутствие
+          keytool -genkey -v -keystore android/app/debug.keystore -storepass android -alias androiddebugkey -keypass android -keyalg RSA -keysize 2048 -validity 10000 -dname "CN=Android Debug,O=Android,C=US"
 
       - name: Build Android APK
         run: |
