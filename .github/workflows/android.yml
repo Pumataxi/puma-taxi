@@ -28,7 +28,7 @@ jobs:
       - name: Install Dependencies
         run: npm install --legacy-peer-deps
 
-      - name: 🚨 Absolute Clean & Key Gen
+      - name: 🚨 Ultimate Key & Gradle Fix
         run: |
           # 1. Исправляем Gradle
           mkdir -p android/gradle/wrapper
@@ -36,15 +36,15 @@ jobs:
           curl -L https://raw.githubusercontent.com/gradle/gradle/v7.6.1/gradlew -o android/gradlew
           chmod +x android/gradlew
           
-          # 2. Генерируем новый ключ с АБСОЛЮТНО другим именем
+          # 2. Генерируем ключ. Важно: создаем его прямо в android/app/
           keytool -genkey -v -keystore android/app/super_puma.jks -storepass pumataxi -alias puma_alias -keypass pumataxi -keyalg RSA -keysize 2048 -validity 10000 -dname "CN=Puma,O=Taxi,C=RU"
 
       - name: Build Android APK
         run: |
           cd android
-          # Насильно прописываем параметры нового ключа в команду сборки
+          # Используем "$GITHUB_WORKSPACE", чтобы путь был абсолютно точным для системы
           ./gradlew clean assembleRelease \
-            -Pandroid.injected.signing.store.file=super_puma.jks \
+            -Pandroid.injected.signing.store.file=$GITHUB_WORKSPACE/android/app/super_puma.jks \
             -Pandroid.injected.signing.store.password=pumataxi \
             -Pandroid.injected.signing.key.alias=puma_alias \
             -Pandroid.injected.signing.key.password=pumataxi \
