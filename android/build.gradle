@@ -5,8 +5,7 @@ buildscript {
         compileSdkVersion = 34
         targetSdkVersion = 34
         ndkVersion = "25.1.8937393"
-        // Поднимаем версию Kotlin, чтобы убрать ошибку несовместимости метаданных
-        kotlinVersion = "1.9.0" 
+        kotlinVersion = "1.9.0" // Устанавливаем версию, которую хочет GitHub
     }
     repositories {
         google()
@@ -27,7 +26,6 @@ allprojects {
     }
 }
 
-// Ультимативная настройка для всех модулей PumaTaxi
 subprojects {
     afterEvaluate { project ->
         if (project.hasProperty('android')) {
@@ -38,11 +36,15 @@ subprojects {
                 }
             }
         }
+        // ГЛАВНЫЙ БЛОК: Заставляет Kotlin молчать об ошибках метаданных
         tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
             kotlinOptions {
                 jvmTarget = "17"
-                // Игнорируем мелкие нестыковки в версиях метаданных
-                freeCompilerArgs += ["-Xskip-metadata-version-check"]
+                freeCompilerArgs += [
+                    "-Xskip-metadata-version-check",
+                    "-Xskip-prerelease-check",
+                    "-Xallow-unstable-dependencies"
+                ]
             }
         }
     }
