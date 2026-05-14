@@ -31,10 +31,15 @@ jobs:
         with:
           gradle-version: 7.5.1
 
+      - name: Generate Fresh Wrapper
+        # Если в репозитории нет рабочего jar, мы создаем его здесь
+        run: |
+          cd android
+          gradle wrapper --gradle-version 7.5.1
+
       - name: Build Android APK
         run: |
           cd android
-          # Создаем исполняемый файл и запускаем сборку
           chmod +x gradlew
           ./gradlew assembleRelease --stacktrace
         env:
