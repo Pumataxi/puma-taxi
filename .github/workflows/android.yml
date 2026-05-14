@@ -26,8 +26,7 @@ jobs:
       - name: Install Dependencies
         run: npm install --legacy-peer-deps
 
-      - name: Setup Gradle 7.5.1
-        # Используем проверенную версию, которая не конфликтует с Kotlin 1.7
+      - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v3
         with:
           gradle-version: 7.5.1
@@ -35,7 +34,8 @@ jobs:
       - name: Build Android APK
         run: |
           cd android
+          # Создаем исполняемый файл и запускаем сборку
           chmod +x gradlew
-          ./gradlew clean assembleRelease --stacktrace
+          ./gradlew assembleRelease --stacktrace
         env:
           JAVA_OPTS: "-Xmx2048m"
