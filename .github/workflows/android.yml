@@ -42,10 +42,10 @@ jobs:
         run: |
           cd android
           chmod +x gradlew
+          # Убрали GRADLE_OPTS, оставили только лимит памяти
           ./gradlew assembleRelease --stacktrace --no-daemon
         env:
           JAVA_OPTS: "-Xmx2048m"
-          GRADLE_OPTS: "-Dorg.gradle.java.home=$JAVA_HOME"
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
