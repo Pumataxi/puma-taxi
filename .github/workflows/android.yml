@@ -26,18 +26,16 @@ jobs:
       - name: Install Dependencies
         run: npm install --legacy-peer-deps
 
-      - name: Install Correct Gradle
-        # Мы скачиваем Gradle 8.5 напрямую, чтобы не зависеть от системного 9.4.1
-        run: |
-          wget -q https://services.gradle.org/distributions/gradle-8.5-bin.zip
-          unzip -q gradle-8.5-bin.zip
-          echo "$(pwd)/gradle-8.5/bin" >> $GITHUB_PATH
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
+        with:
+          gradle-version: 8.5 # Фиксируем рабочую версию
 
       - name: Build Android APK
         run: |
           cd android
-          # Используем команду 'gradle', которую мы только что установили
-          gradle assembleRelease --stacktrace
+          # Добавляем флаги для игнорирования предупреждений Kotlin
+          ./gradlew assembleRelease -Dkotlin.daemon.jvm.options="-Xmx2048m" --stacktrace
         env:
           JAVA_OPTS: "-Xmx2048m"
 
