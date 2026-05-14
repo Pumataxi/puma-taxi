@@ -3,11 +3,17 @@ apply plugin: "com.facebook.react"
 apply plugin: "org.jetbrains.kotlin.android"
 
 /**
- * Определение переменных для React Native
+ * Конфигурация React Native
  */
-def jscFlavor = 'org.webkit:android-jsc:+'
-// Твой фикс: объявляем переменную, чтобы Gradle не ругался
+react {
+    // Явно указываем главный файл, чтобы убрать ошибку из видео
+    entryFile = file("../index.js")
+    bundleAssetName = "index.android.bundle"
+    debuggableVariants = ["debug"]
+}
+
 def hermesEnabled = project.hasProperty("hermesEnabled") ? project.hermesEnabled.toBoolean() : false
+def jscFlavor = 'org.webkit:android-jsc:+'
 
 android {
     ndkVersion rootProject.ext.ndkVersion
@@ -41,11 +47,6 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
         }
-    }
-
-    packagingOptions {
-        pickFirst "**/libjsc.so"
-        pickFirst "**/libc++_shared.so"
     }
 }
 
