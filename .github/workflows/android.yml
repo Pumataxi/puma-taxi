@@ -3,8 +3,6 @@ name: Build Android APK
 on:
   push:
     branches: [ main ]
-  pull_request:
-    branches: [ main ]
 
 jobs:
   build:
@@ -19,16 +17,14 @@ jobs:
         with:
           java-version: '17'
           distribution: 'zulu'
-          cache: gradle
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '18'
-          cache: 'npm'
 
       - name: Install Dependencies
-        # Мы используем --legacy-peer-deps, чтобы избежать конфликтов версий
+        # Мы убрали кэширование, чтобы билд просто поставил то, что есть
         run: npm install --legacy-peer-deps
 
       - name: Make Gradlew Executable
@@ -38,11 +34,3 @@ jobs:
         run: |
           cd android
           ./gradlew assembleRelease --stacktrace
-        env:
-          JAVA_OPTS: "-Xmx2048m"
-
-      - name: Upload APK
-        uses: actions/upload-artifact@v4
-        with:
-          name: puma-taxi-release
-          path: android/app/build/outputs/apk/release/*.apk
