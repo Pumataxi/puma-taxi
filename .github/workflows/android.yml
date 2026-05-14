@@ -7,6 +7,9 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -17,11 +20,31 @@ jobs:
           java-version: '17'
           distribution: 'zulu'
 
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
       - name: Install Dependencies
         run: npm install --legacy-peer-deps
 
-      - name: Build Android APK
-        # Запуск из корня через флаг -p (project-dir)
+      - name: Emergency Fix Wrapper
+        # Мы принудительно скачиваем ПРАВИЛЬНЫЙ jar, 
+        # на случай если в гите лежит пустышка.
         run: |
+          mkdir -p android/gradle/wrapper
+          curl -L https://raw.githubusercontent.com/gradle/gradle/v7.6.1/gradle/wrapper/gradle-wrapper.jar -o android/gradle/wrapper/gradle-wrapper.jar
           chmod +x android/gradlew
-          ./android/gradlew -p android assembleRelease --no-daemon
+
+      - name: Build Android APK
+        # Запускаем через флаг -p, чтобы gradle точно знал, где искать настройки
+        run: |
+          ./android/gradlew -p android assembleRelease --stacktrace --no-daemon
+        env:
+          JAVA_OPTS: "-Xmx2048m"
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: puma-taxi-release
+          path: android/app/build/outputs/apk/release/*.apk
