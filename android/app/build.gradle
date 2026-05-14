@@ -3,15 +3,16 @@ apply plugin: "com.facebook.react"
 apply plugin: "org.jetbrains.kotlin.android"
 
 /**
- * Конфигурация React Native
+ * Конфигурация React Native 0.72+
  */
 react {
-    // Явно указываем главный файл, чтобы убрать ошибку из видео
-    entryFile = file("../index.js")
+    // Используем простую строку. Плагин сам найдет корень, если запуск идет через -p
+    entryFile = "index.js"
     bundleAssetName = "index.android.bundle"
     debuggableVariants = ["debug"]
 }
 
+// Фикс для корректного определения движка
 def hermesEnabled = project.hasProperty("hermesEnabled") ? project.hermesEnabled.toBoolean() : false
 def jscFlavor = 'org.webkit:android-jsc:+'
 
@@ -39,9 +40,6 @@ android {
     }
 
     buildTypes {
-        debug {
-            signingConfig signingConfigs.debug
-        }
         release {
             signingConfig signingConfigs.debug
             minifyEnabled false
@@ -52,7 +50,6 @@ android {
 
 dependencies {
     implementation("com.facebook.react:react-android")
-
     if (hermesEnabled) {
         implementation("com.facebook.react:hermes-android")
     } else {
