@@ -1,3 +1,6 @@
 rootProject.name = 'PumaTaxi'
+
+// Подключаем плагин React Native из node_modules напрямую
 includeBuild('../node_modules/@react-native/gradle-plugin')
+
 include ':app'
