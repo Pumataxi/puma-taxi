@@ -34,10 +34,11 @@ jobs:
       - name: Build Android APK
         run: |
           cd android
-          # Сначала чистим, потом собираем
           gradle clean assembleRelease --stacktrace
         env:
           JAVA_OPTS: "-Xmx2048m"
+          # Важная строка: говорим Kotlin использовать Java 17
+          GRADLE_OPTS: "-Dorg.gradle.java.home=$JAVA_HOME"
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
