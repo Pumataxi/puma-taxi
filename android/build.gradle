@@ -12,6 +12,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
+        # Версия 8.1.1 — самая стабильная для Gradle 8.5
         classpath("com.android.tools.build:gradle:8.1.1")
         classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
         classpath("com.facebook.react:react-native-gradle-plugin")
