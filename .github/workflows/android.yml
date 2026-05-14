@@ -37,19 +37,17 @@ jobs:
 
       - name: 🔑 Generate & Extract SHA-1 Key
         run: |
-          # Создаем папку для ключа, если её нет
-          mkdir -p ~/.android
-          # Генерируем новый ключ для подписи (debug)
-          keytool -genkey -v -keystore ~/.android/debug.keystore -alias androiddebugkey -storepass android -keypass android -keyalg RSA -keysize 2048 -validity 10000 -dname "CN=Android Debug,O=Android,C=US"
-          # Выводим SHA-1 в консоль, чтобы ты мог скопировать его в Appwrite
-          echo "--- ТВОЙ SHA-1 КЛЮЧ НИЖЕ ---"
-          keytool -list -v -keystore ~/.android/debug.keystore -alias androiddebugkey -storepass android -keypass android | grep SHA1
-          echo "--- КОПИРУЙ СТРОКУ ВЫШЕ ---"
+          # Создаем ключ прямо в папке android проекта, где его ищет Gradle
+          keytool -genkey -v -keystore android/debug.keystore -alias androiddebugkey -storepass android -keypass android -keyalg RSA -keysize 2048 -validity 10000 -dname "CN=Android Debug,O=Android,C=US"
+          
+          echo "--- ТВОЙ SHA-1 КЛЮЧ НИЖЕ (КОПИРУЙ В APPWRITE) ---"
+          keytool -list -v -keystore android/debug.keystore -alias androiddebugkey -storepass android -keypass android | grep SHA1
+          echo "--- КОНЕЦ КЛЮЧА ---"
 
       - name: Build Android APK
         run: |
           cd android
-          # Собираем релизную версию, пропуская проверку старых подписей
+          # Собираем релизную версию
           ./gradlew clean assembleRelease -x validateSigningRelease --no-daemon
         env:
           JAVA_OPTS: "-Xmx2048m"
