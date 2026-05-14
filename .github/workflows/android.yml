@@ -27,7 +27,6 @@ jobs:
         run: npm install --legacy-peer-deps
 
       - name: Manual Gradle Setup
-        # Мы сами скачиваем Gradle 8.5, чтобы GitHub не подсовывал нам нерабочую версию 9.4
         run: |
           wget -q https://services.gradle.org/distributions/gradle-8.5-bin.zip
           unzip -q gradle-8.5-bin.zip
@@ -37,11 +36,12 @@ jobs:
         run: |
           cd android
           chmod +x gradlew
-          # Делаем полную очистку перед сборкой, чтобы убрать конфликты метаданных
-          ./gradlew clean assembleRelease --stacktrace
+          # -Xskip-metadata-version-check позволяет игнорировать разницу между 1.7 и 1.9
+          ./gradlew clean assembleRelease --stacktrace \
+            -Dkotlin.incremental=false \
+            -Pkotlin.version=1.9.0
         env:
           JAVA_OPTS: "-Xmx2048m"
-          # Сообщаем компилятору Kotlin использовать установленную Java 17
           GRADLE_OPTS: "-Dorg.gradle.java.home=$JAVA_HOME"
 
       - name: Upload APK
