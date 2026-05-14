@@ -12,10 +12,10 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Set up JDK 17
+      - name: Set up JDK 11
         uses: actions/setup-java@v4
         with:
-          java-version: '17'
+          java-version: '11'
           distribution: 'zulu'
 
       - name: Setup Node.js
@@ -26,26 +26,16 @@ jobs:
       - name: Install Dependencies
         run: npm install --legacy-peer-deps
 
-      - name: Manual Gradle Setup
-        run: |
-          wget -q https://services.gradle.org/distributions/gradle-8.5-bin.zip
-          unzip -q gradle-8.5-bin.zip
-          ./gradle-8.5/bin/gradle wrapper --gradle-version 8.5 --project-dir android
+      - name: Setup Gradle 7.5.1
+        # Используем проверенную версию, которая не конфликтует с Kotlin 1.7
+        uses: gradle/actions/setup-gradle@v3
+        with:
+          gradle-version: 7.5.1
 
       - name: Build Android APK
         run: |
           cd android
           chmod +x gradlew
-          # -Xskip-metadata-version-check позволяет игнорировать разницу между 1.7 и 1.9
-          ./gradlew clean assembleRelease --stacktrace \
-            -Dkotlin.incremental=false \
-            -Pkotlin.version=1.9.0
+          ./gradlew clean assembleRelease --stacktrace
         env:
           JAVA_OPTS: "-Xmx2048m"
-          GRADLE_OPTS: "-Dorg.gradle.java.home=$JAVA_HOME"
-
-      - name: Upload APK
-        uses: actions/upload-artifact@v4
-        with:
-          name: puma-taxi-release
-          path: android/app/build/outputs/apk/release/*.apk
