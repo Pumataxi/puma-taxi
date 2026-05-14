@@ -1,1 +1,6 @@
+rootProject.name = 'PumaTaxi'
 
+// Подключаем плагин напрямую, без лишних проверок путей
+includeBuild('../node_modules/@react-native/gradle-plugin')
+
+include ':app'
