@@ -7,21 +7,24 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      # Включаем поддержку Node 24 для экшенов, чтобы убрать ворнинги из логов
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Set up JDK 11
+      - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
-          java-version: '11'
+          java-version: '17'
           distribution: 'zulu'
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version: '20'
 
       - name: Install Dependencies
         run: npm install --legacy-peer-deps
@@ -30,12 +33,7 @@ jobs:
         uses: gradle/actions/setup-gradle@v3
         with:
           gradle-version: 7.5.1
-
-      - name: Generate Fresh Wrapper
-        # Если в репозитории нет рабочего jar, мы создаем его здесь
-        run: |
-          cd android
-          gradle wrapper --gradle-version 7.5.1
+          cache-disabled: true
 
       - name: Build Android APK
         run: |
@@ -44,3 +42,10 @@ jobs:
           ./gradlew assembleRelease --stacktrace
         env:
           JAVA_OPTS: "-Xmx2048m"
+          GRADLE_OPTS: "-Dorg.gradle.java.home=$JAVA_HOME"
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: puma-taxi-release
+          path: android/app/build/outputs/apk/release/*.apk
