@@ -34,7 +34,6 @@ jobs:
           gradle-version: 7.5.1
 
       - name: Generate Wrapper
-        # Это восстановит отсутствующий файл org.gradle.wrapper.GradleWrapperMain
         run: |
           cd android
           gradle wrapper --gradle-version 7.5.1
