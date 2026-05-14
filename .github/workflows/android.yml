@@ -33,8 +33,14 @@ jobs:
         with:
           gradle-version: 7.6.1
 
+      - name: Generate Wrapper (The Fix)
+        # Если .jar пропал из гита, эта команда создаст его заново в папке android
+        run: |
+          cd android
+          gradle wrapper --gradle-version 7.6.1
+
       - name: Build Android APK
-        # Запускаем из корня репозитория!
+        # Запускаем через созданный воркер из корня
         run: |
           chmod +x android/gradlew
           ./android/gradlew -p android assembleRelease --stacktrace --no-daemon
