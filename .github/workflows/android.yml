@@ -31,7 +31,7 @@ jobs:
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v3
         with:
-          gradle-version: 7.6.1 # Обновили с 7.5.1 до 7.6.1
+          gradle-version: 7.6.1
 
       - name: Generate Wrapper
         run: |
