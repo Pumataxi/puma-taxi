@@ -5,14 +5,14 @@ buildscript {
         compileSdkVersion = 33
         targetSdkVersion = 33
         ndkVersion = "23.1.7779620"
-        kotlinVersion = "1.7.1"
+        // Твой фикс: используем стабильную 1.7.10
+        kotlinVersion = "1.7.10"
     }
     repositories {
         google()
         mavenCentral()
     }
     dependencies {
-        // Исправлено: комментарии только через двойной слэш
         classpath("com.android.tools.build:gradle:7.4.2")
         classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
         classpath("com.facebook.react:react-native-gradle-plugin")
@@ -23,6 +23,7 @@ allprojects {
     repositories {
         google()
         mavenCentral()
+        // Важно для React Native модулей
         maven { url "$rootDir/../node_modules/react-native/android" }
     }
 }
