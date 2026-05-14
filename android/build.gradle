@@ -14,8 +14,8 @@ buildscript {
     dependencies {
         classpath("com.android.tools.build:gradle:8.1.1")
         classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
-        // Добавляем эту строку обратно, она критически важна!
-        classpath("com.facebook.react:react-native-gradle-plugin")
+        // Указываем версию явно, чтобы билд не падал
+        classpath("com.facebook.react:react-native-gradle-plugin:0.72.11")
     }
 }
 
