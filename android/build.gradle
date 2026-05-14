@@ -5,14 +5,14 @@ buildscript {
         compileSdkVersion = 33
         targetSdkVersion = 33
         ndkVersion = "23.1.7779620"
-        kotlinVersion = "1.7.1" // Стабильная версия для этого окружения
+        kotlinVersion = "1.7.1"
     }
     repositories {
         google()
         mavenCentral()
     }
     dependencies {
-        # Плагин 7.4.2 — предел для Gradle 7.5.1
+        // Исправлено: теперь комментарий корректный
         classpath("com.android.tools.build:gradle:7.4.2")
         classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
         classpath("com.facebook.react:react-native-gradle-plugin")
@@ -24,5 +24,23 @@ allprojects {
         google()
         mavenCentral()
         maven { url "$rootDir/../node_modules/react-native/android" }
+    }
+}
+
+subprojects {
+    afterEvaluate { project ->
+        if (project.hasProperty('android')) {
+            project.android {
+                compileOptions {
+                    sourceCompatibility JavaVersion.VERSION_11
+                    targetCompatibility JavaVersion.VERSION_11
+                }
+            }
+        }
+        tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
+            kotlinOptions {
+                jvmTarget = "11"
+            }
+        }
     }
 }
