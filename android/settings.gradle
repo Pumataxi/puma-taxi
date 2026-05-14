@@ -1,6 +1,4 @@
 rootProject.name = 'PumaTaxi'
-
-apply from: file("../node_modules/@react-native/gradle-plugin/tooling/all-projects-settings.gradle")
+apply from: file("../node_modules/@react-native/community-cli-plugin/test_config_settings.gradle"); includeBuild("../node_modules/@react-native/gradle-plugin")
 
 include ':app'
-includeBuild('../node_modules/@react-native/gradle-plugin')
