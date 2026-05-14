@@ -10,7 +10,6 @@ buildscript {
     repositories {
         google()
         mavenCentral()
-        maven { url "$rootDir/../node_modules/react-native/android" }
     }
     dependencies {
         classpath("com.android.tools.build:gradle:8.1.1")
@@ -27,7 +26,6 @@ allprojects {
     }
 }
 
-// Принудительная настройка для ВСЕХ модулей проекта
 subprojects {
     afterEvaluate { project ->
         if (project.hasProperty('android')) {
@@ -38,7 +36,7 @@ subprojects {
                 }
             }
         }
-        tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
+        tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
             kotlinOptions {
                 jvmTarget = "17"
             }
