@@ -26,16 +26,18 @@ jobs:
       - name: Install Dependencies
         run: npm install --legacy-peer-deps
 
-      - name: Setup Gradle
+      - name: Setup Gradle 8.5
         uses: gradle/actions/setup-gradle@v3
         with:
-          gradle-version: 8.5 # Фиксируем рабочую версию
+          gradle-version: 8.5
 
       - name: Build Android APK
         run: |
           cd android
-          # Добавляем флаги для игнорирования предупреждений Kotlin
-          ./gradlew assembleRelease -Dkotlin.daemon.jvm.options="-Xmx2048m" --stacktrace
+          # Даем права на запуск исполняемому файлу
+          chmod +x gradlew
+          # Запускаем сборку через локальный gradlew
+          ./gradlew assembleRelease --stacktrace
         env:
           JAVA_OPTS: "-Xmx2048m"
 
