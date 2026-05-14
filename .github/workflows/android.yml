@@ -27,21 +27,21 @@ jobs:
         run: npm install --legacy-peer-deps
 
       - name: Manual Gradle Setup
-        # Скачиваем Gradle 8.5 вручную и создаем локальный Wrapper
+        # Мы сами скачиваем Gradle 8.5, чтобы GitHub не подсовывал нам нерабочую версию 9.4
         run: |
           wget -q https://services.gradle.org/distributions/gradle-8.5-bin.zip
           unzip -q gradle-8.5-bin.zip
-          # Используем распакованный gradle для генерации wrapper внутри проекта
           ./gradle-8.5/bin/gradle wrapper --gradle-version 8.5 --project-dir android
 
       - name: Build Android APK
         run: |
           cd android
           chmod +x gradlew
-          # Запускаем строго локальный ./gradlew (версии 8.5)
+          # Делаем полную очистку перед сборкой, чтобы убрать конфликты метаданных
           ./gradlew clean assembleRelease --stacktrace
         env:
           JAVA_OPTS: "-Xmx2048m"
+          # Сообщаем компилятору Kotlin использовать установленную Java 17
           GRADLE_OPTS: "-Dorg.gradle.java.home=$JAVA_HOME"
 
       - name: Upload APK
