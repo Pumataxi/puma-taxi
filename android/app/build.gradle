@@ -2,11 +2,7 @@ apply plugin: "com.android.application"
 apply plugin: "com.facebook.react"
 apply plugin: "org.jetbrains.kotlin.android"
 
-/**
- * Конфигурация React Native 0.72+
- */
 react {
-    // В RN 0.72+ автоматика сама найдет index.js в корне проекта
     bundleAssetName = "index.android.bundle"
     debuggableVariants = ["debug"]
 }
@@ -15,11 +11,10 @@ def hermesEnabled = project.hasProperty("hermesEnabled") ? project.hermesEnabled
 def jscFlavor = 'org.webkit:android-jsc:+'
 
 android {
-    ndkVersion rootProject.ext.ndkVersion
-    compileSdkVersion rootProject.ext.compileSdkVersion
-
     namespace "com.pumataxi"
-    
+    compileSdkVersion rootProject.ext.compileSdkVersion
+    ndkVersion rootProject.ext.ndkVersion
+
     defaultConfig {
         applicationId "com.pumataxi"
         minSdkVersion rootProject.ext.minSdkVersion
@@ -30,17 +25,22 @@ android {
 
     signingConfigs {
         debug {
-            storeFile file('debug.keystore')
-            storePassword 'android'
-            keyAlias 'androiddebugkey'
-            keyPassword 'android'
+            storeFile rootProject.file("debug.keystore")
+            storePassword "android"
+            keyAlias "androiddebugkey"
+            keyPassword "android"
         }
     }
 
     buildTypes {
+        debug {
+            signingConfig signingConfigs.debug
+        }
+
         release {
             signingConfig signingConfigs.debug
             minifyEnabled false
+            shrinkResources false
             proguardFiles getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
         }
     }
@@ -48,6 +48,7 @@ android {
 
 dependencies {
     implementation("com.facebook.react:react-android")
+
     if (hermesEnabled) {
         implementation("com.facebook.react:hermes-android")
     } else {
