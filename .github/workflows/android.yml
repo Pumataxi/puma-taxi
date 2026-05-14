@@ -8,6 +8,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     env:
+      # Фикс для корректной работы Node.js в окружении GitHub Actions
       FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
     steps:
@@ -26,6 +27,7 @@ jobs:
           node-version: '20'
 
       - name: Install Dependencies
+        # Используем --legacy-peer-deps, чтобы избежать конфликтов версий в React Native
         run: npm install --legacy-peer-deps
 
       - name: Setup Gradle
@@ -33,14 +35,16 @@ jobs:
         with:
           gradle-version: 7.6.1
 
-      - name: Generate Wrapper (The Fix)
-        # Если .jar пропал из гита, эта команда создаст его заново в папке android
+      - name: Force Fix Wrapper
+        # Если .jar файл пропал из репозитория, скачиваем его напрямую.
+        # Это лечит ошибку "Could not find or load main class org.gradle.wrapper.GradleWrapperMain"
         run: |
-          cd android
-          gradle wrapper --gradle-version 7.6.1
+          mkdir -p android/gradle/wrapper
+          curl -L https://raw.githubusercontent.com/gradle/gradle/v7.6.1/gradle/wrapper/gradle-wrapper.jar -o android/gradle/wrapper/gradle-wrapper.jar
 
       - name: Build Android APK
-        # Запускаем через созданный воркер из корня
+        # ВАЖНО: Запускаем из КОРНЯ проекта, указывая путь к gradlew.
+        # Это позволяет React Native автоматически найти index.js без лишних настроек.
         run: |
           chmod +x android/gradlew
           ./android/gradlew -p android assembleRelease --stacktrace --no-daemon
@@ -48,6 +52,7 @@ jobs:
           JAVA_OPTS: "-Xmx2048m"
 
       - name: Upload APK
+        # После успешной сборки файл появится в разделе Artifacts в GitHub Actions
         uses: actions/upload-artifact@v4
         with:
           name: puma-taxi-release
