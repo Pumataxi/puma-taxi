@@ -6,13 +6,11 @@ apply plugin: "org.jetbrains.kotlin.android"
  * Конфигурация React Native 0.72+
  */
 react {
-    // Используем простую строку. Плагин сам найдет корень, если запуск идет через -p
-    entryFile = "index.js"
+    // В RN 0.72+ автоматика сама найдет index.js в корне проекта
     bundleAssetName = "index.android.bundle"
     debuggableVariants = ["debug"]
 }
 
-// Фикс для корректного определения движка
 def hermesEnabled = project.hasProperty("hermesEnabled") ? project.hermesEnabled.toBoolean() : false
 def jscFlavor = 'org.webkit:android-jsc:+'
 
