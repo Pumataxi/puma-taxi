@@ -25,4 +25,11 @@ allprojects {
         mavenCentral()
         maven { url "$rootDir/../node_modules/react-native/android" }
     }
+
+    // Принудительная синхронизация Java для Kotlin
+    tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
+        kotlinOptions {
+            jvmTarget = "17"
+        }
+    }
 }
