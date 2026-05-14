@@ -1,2 +1,6 @@
 rootProject.name = 'PumaTaxi'
+
+apply from: file("../node_modules/@react-native/gradle-plugin/tooling/all-projects-settings.gradle")
+
 include ':app'
+includeBuild('../node_modules/@react-native/gradle-plugin')
