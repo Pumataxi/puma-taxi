@@ -1,4 +1,4 @@
-name: Build Android APK & Get Key
+name: Build Android APK & Appwrite Setup
 
 on:
   push:
@@ -35,15 +35,24 @@ jobs:
           curl -L https://raw.githubusercontent.com/gradle/gradle/v7.6.1/gradlew -o android/gradlew
           chmod +x android/gradlew
 
-      - name: 🔑 Extract SHA-1 Key
+      - name: 🔑 Generate & Extract SHA-1 Key
         run: |
-          # Этот шаг покажет нам ключ для Appwrite
+          # Создаем папку для ключа, если её нет
+          mkdir -p ~/.android
+          # Генерируем новый ключ для подписи (debug)
+          keytool -genkey -v -keystore ~/.android/debug.keystore -alias androiddebugkey -storepass android -keypass android -keyalg RSA -keysize 2048 -validity 10000 -dname "CN=Android Debug,O=Android,C=US"
+          # Выводим SHA-1 в консоль, чтобы ты мог скопировать его в Appwrite
+          echo "--- ТВОЙ SHA-1 КЛЮЧ НИЖЕ ---"
           keytool -list -v -keystore ~/.android/debug.keystore -alias androiddebugkey -storepass android -keypass android | grep SHA1
+          echo "--- КОПИРУЙ СТРОКУ ВЫШЕ ---"
 
       - name: Build Android APK
         run: |
           cd android
+          # Собираем релизную версию, пропуская проверку старых подписей
           ./gradlew clean assembleRelease -x validateSigningRelease --no-daemon
+        env:
+          JAVA_OPTS: "-Xmx2048m"
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
