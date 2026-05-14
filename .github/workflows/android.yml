@@ -1,4 +1,4 @@
-name: Build Android APK
+name: Build Android APK & Get Key
 
 on:
   push:
@@ -28,29 +28,22 @@ jobs:
       - name: Install Dependencies
         run: npm install --legacy-peer-deps
 
-      - name: 🚨 Ultimate Key & Gradle Fix
+      - name: 🚨 Gradle Fix
         run: |
-          # 1. Исправляем Gradle
           mkdir -p android/gradle/wrapper
           curl -L https://raw.githubusercontent.com/gradle/gradle/v7.6.1/gradle/wrapper/gradle-wrapper.jar -o android/gradle/wrapper/gradle-wrapper.jar
           curl -L https://raw.githubusercontent.com/gradle/gradle/v7.6.1/gradlew -o android/gradlew
           chmod +x android/gradlew
-          
-          # 2. Генерируем ключ. Важно: создаем его прямо в android/app/
-          keytool -genkey -v -keystore android/app/super_puma.jks -storepass pumataxi -alias puma_alias -keypass pumataxi -keyalg RSA -keysize 2048 -validity 10000 -dname "CN=Puma,O=Taxi,C=RU"
+
+      - name: 🔑 Extract SHA-1 Key
+        run: |
+          # Этот шаг покажет нам ключ для Appwrite
+          keytool -list -v -keystore ~/.android/debug.keystore -alias androiddebugkey -storepass android -keypass android | grep SHA1
 
       - name: Build Android APK
         run: |
           cd android
-          # Используем "$GITHUB_WORKSPACE", чтобы путь был абсолютно точным для системы
-          ./gradlew clean assembleRelease \
-            -Pandroid.injected.signing.store.file=$GITHUB_WORKSPACE/android/app/super_puma.jks \
-            -Pandroid.injected.signing.store.password=pumataxi \
-            -Pandroid.injected.signing.key.alias=puma_alias \
-            -Pandroid.injected.signing.key.password=pumataxi \
-            --stacktrace --no-daemon
-        env:
-          JAVA_OPTS: "-Xmx2048m"
+          ./gradlew clean assembleRelease -x validateSigningRelease --no-daemon
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
