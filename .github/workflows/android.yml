@@ -26,18 +26,20 @@ jobs:
       - name: Install Dependencies
         run: npm install --legacy-peer-deps
 
-      - name: Setup Gradle 8.5
-        uses: gradle/actions/setup-gradle@v3
-        with:
-          gradle-version: 8.5
-          cache-disabled: true # Отключим кэш, чтобы избежать ошибок 400
+      - name: Manual Gradle Setup
+        # Скачиваем Gradle 8.5 вручную и создаем локальный Wrapper
+        run: |
+          wget -q https://services.gradle.org/distributions/gradle-8.5-bin.zip
+          unzip -q gradle-8.5-bin.zip
+          # Используем распакованный gradle для генерации wrapper внутри проекта
+          ./gradle-8.5/bin/gradle wrapper --gradle-version 8.5 --project-dir android
 
       - name: Build Android APK
         run: |
           cd android
-          # Используем команду 'gradle', которую поставил шаг выше, 
-          # а не системный вызов
-          gradle assembleRelease --stacktrace
+          chmod +x gradlew
+          # Запускаем строго локальный ./gradlew (версии 8.5)
+          ./gradlew clean assembleRelease --stacktrace
         env:
           JAVA_OPTS: "-Xmx2048m"
           GRADLE_OPTS: "-Dorg.gradle.java.home=$JAVA_HOME"
